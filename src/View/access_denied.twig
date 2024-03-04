@@ -1,0 +1,17 @@
+{% extends 'Layout/page.html.twig' %}
+
+{% block title %}Access Denied - My-Admin{% endblock %}
+
+{% block content %}
+    <div class="container">
+    <div class="col md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Access Denied</h5>
+                <p class="card-text">You are not authorized.</p>
+                <a href="/login" class="btn btn-primary">Click here to Login and get access</a>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
