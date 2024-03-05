@@ -1,0 +1,63 @@
+{% extends 'Layout/page.html.twig' %}
+
+{% block title %}Edit Profile - My-Admin{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center">
+    <div class="card" style="width: 400px;">
+        <div class="card-body">
+            <h5 class="card-title">Edit your Profile</h5>
+            <form id="editProfileForm" method="post" style="max-width: 400px;">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" value="">
+                    <div id="nameError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" value="">
+                    <div id="emailError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" class="form-control" value="">
+                    <div id="ageError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                    <label for="profile_photo">Profile Photo:</label>
+                    <input type="file" id="profile_photo" name="profile_photo" class="form-control">
+                </div>
+                <button type="submit" name="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--
+<script>
+$(document).ready(function () {
+    $('#editProfileForm').submit(function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        // Using ajax for photo
+        $.ajax({
+            url: $(this).attr('action'),
+            type: $(this).attr('method'),
+            data: formData,
+            processData: false,  
+            contentType: false,  
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                // Handle error
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+!>
