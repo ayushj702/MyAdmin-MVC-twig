@@ -31,6 +31,7 @@
                 <div class="col-md-4 mb-4"> 
                     <div class="box">
                         <p>Hello <b>{{ userData.name }}</b>, Welcome!</p>
+                        <img src="{{ profilePhoto }}" alt="Profile Photo" class="img-fluid">
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
@@ -43,8 +44,27 @@
                         <p>And you are <b>{{ userData.age }}</b> years old.</p>
                     </div>
                 </div>
+                <div class="col-md-12">
+                <!-- Button to change role -->
+            <div class="col-md-12">
+                <div class="box">
+                    <p>Your role is: <b>
+                        <ul>
+                            {% for role in userData.roles %}
+                                <li>{{ role.getName() }}</li>
+                            {% endfor %}
+                        </ul>
+                        </b></p>
+                    
+                    {% if not role %}
+                        <form action="/change-role" method="post">
+                            <button type="submit" class="btn btn-primary">Change Role to Admin</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            </div>
             </div>
         </div>
     </main>
 {% endblock %}
-

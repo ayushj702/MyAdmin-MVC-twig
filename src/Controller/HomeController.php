@@ -5,8 +5,7 @@ namespace Controller;
 use Core\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Model\User;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
+use Model\Role;
 
 class HomeController extends BaseController {
     
@@ -19,9 +18,12 @@ class HomeController extends BaseController {
         // Check if user is logged in
         if (isset($_SESSION['id'])) {
             $userData = $this->getUserData();
-            // Render home_view.twig with user data
+            $profilePhoto = $this->getProfilePhoto($_SESSION['id']);
+
+            // Render home_view.twig with user data and profile photo
             $content = $this->twig->render('home_view.twig', [
                 'userData' => $userData,
+                'profilePhoto' => $profilePhoto,
             ]);
         } else {
             // User is not logged in, render index_view.twig
@@ -46,17 +48,39 @@ class HomeController extends BaseController {
             $name = $currUser->getName();
             $email = $currUser->getEmail();
             $age = $currUser->getAge();
+            $roles = $currUser->getRoles()->toArray();
+            
+    
         
             // Return user data
             return [
                 'name' => $name,
                 'email' => $email,
-                'age' => $age
+                'age' => $age,
+                'roles' => $roles,
+
             ];
         } else {
             // Return an empty array if user doesn't exist
             return [];
         }
     }
+
+    private function getProfilePhoto($userId) {
+        // Fetch profile photo path from the database
+        $userRepo = $this->entityManager->getRepository(User::class);
+        $user = $userRepo->find($userId);
+
+        // Check if user exists and has a profile photo
+        if ($user && $user->getProfilePhoto()) {
+            return $user->getProfilePhoto();
+        }
+
+        // Return default profile photo path if no photo is found
+        return 'default_profile_photo.jpg';
+    }
+
+
+
     
 }

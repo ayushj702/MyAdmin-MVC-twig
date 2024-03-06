@@ -6,8 +6,6 @@ use Core\Response;
 use Controller\BaseController;
 use Doctrine\ORM\EntityManagerInterface;
 use Model\User;
-use Twig\Environment;
-use Twig\Loader\FilesystemLoader;
 
 class EditController extends BaseController {
 
@@ -21,14 +19,14 @@ class EditController extends BaseController {
         }
 
         if ($request->getMethod() === 'POST' && isset($_POST['submit'])) {
-            return $this->handleEditProfile();
+            return $this->handleEditProfile($request);
         } else {
             // Render the edit profile form
             return $this->generateEditForm();
         }
     }
 
-    private function handleEditProfile(): Response {
+    private function handleEditProfile($request): Response {
         $name = $_POST['name'];
         $email = $_POST['email'];
         $age = $_POST['age'];
@@ -50,6 +48,25 @@ class EditController extends BaseController {
             return $this->generateEditForm($errorMessage);
         }
 
+        // Handle profile photo upload
+        if (isset($_POST['submit'])) {
+            $uploadDir = 'uploads/profile_photo/';
+            
+            $uploadFile = $uploadDir . basename($_FILES['profile_photo']['name']);
+            if (move_uploaded_file($_FILES['profile_photo']['tmp_name'], $uploadFile)) {
+                // Update user's profile picture path
+                $user->setProfilePhoto($uploadFile);
+                $this->entityManager->flush();
+                $response = new Response();
+                $response->setRedirect("/");
+                return $response;
+            } else {
+                // Handle upload failure
+                $errorMessage = "Failed to upload profile picture.";
+                return $this->generateEditForm($errorMessage);
+            }
+        }
+
         // Update user data
         $user->setName($name);
         $user->setEmail($email);
@@ -62,9 +79,10 @@ class EditController extends BaseController {
         $_SESSION['email'] = $email;
         $_SESSION['age'] = $age;
 
-        // Redirect to home page
+        // Return JSON response indicating success
         $response = new Response();
-        $response->setRedirect("/");
+        $response->setContent(json_encode(['success' => true]));
+        $response->addHeader('Content-Type', 'application/json');
         return $response;
     }
 

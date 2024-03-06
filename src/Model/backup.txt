@@ -1,0 +1,50 @@
+<?php
+
+namespace Model;
+
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Entity]
+#[ORM\Table(name: 'users_roles')]
+class UserRole
+{
+    #[ORM\Id]
+    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    private $id;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private $user;
+
+    #[ORM\ManyToOne(targetEntity: Role::class)]
+    #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id')]
+    private $role;
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
+    }
+
+    public function getRole(): Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(Role $role): void
+    {
+        $this->role = $role;
+    }
+
+
+}

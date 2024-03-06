@@ -5,6 +5,7 @@ namespace Controller;
 use Core\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Model\User;
+use Model\Session;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -21,6 +22,13 @@ abstract class BaseController {
 
     abstract public function render($request): Response;
 
+    protected function checkSession(): bool {
+        session_start();
+
+        $sessionId = session_id();
+        $session = $this->entityManager->getRepository(Session::class)->find($sessionId);
+        return $session !== null;
+    }
     
 }
 

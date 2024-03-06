@@ -5,6 +5,7 @@ namespace Controller;
 use Core\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Model\User;
+use Model\Session;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -46,6 +47,15 @@ class LoginController extends BaseController {
             // Start the session and set user data
             session_start();
             $_SESSION['id'] = $user->getId();
+
+            // Store session id in sessionDB
+            $session = new Session();
+            $session->setId(session_id());
+            $session->setUserId($user->getId());
+            $session->setData("test"); 
+            $this->entityManager->persist($session);
+            $this->entityManager->flush();
+
             // Redirect to home page
             $response = new Response();
             $response->setRedirect("/");

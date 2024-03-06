@@ -23,10 +23,12 @@ class Router {
         //die;
         foreach ($this->routes as $methodKey => $routes) {
             foreach ($routes as $path => $controller) {
-                //echo "Debug:<br> url: $url, path: $path, methodkey: $methodKey, method: $method, controller: $controller<br>"; // Debug statement
+                //echo "Debug:<br> url: $url, path: $path, methodkey: $methodKey, method: $method, controller: $controller<br>";
+                //die; // Debug statement
                 //cho "$url and $path <br>";
                 if ($url === $path) {
                     //echo "Debug: Match found for URL: $url<br>"; // Debug statement
+                    //die;
                     return [
                         'controller' => $controller,
                         'methods' => [$method]
