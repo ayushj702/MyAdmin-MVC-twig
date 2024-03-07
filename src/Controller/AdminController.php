@@ -3,11 +3,19 @@
 namespace Controller;
 
 use Core\Response;
+use Model\Permission;
 use Model\User;
+use Model\Role;
 
 class AdminController extends BaseController {
+    private $permissionManager;
+
+    public function __construct() {
+        $this->permissionManager = new Permission();
+    }
 
     public function render($request): Response {
+        session_start();
         // Check if the user is an administrator
         if ($this->isAdmin()) {
             $activeUsers = $this->entityManager->getRepository(User::class)->findAll();
@@ -25,21 +33,35 @@ class AdminController extends BaseController {
     }
 
     private function isAdmin() {
-        // for now return to true to check
-        return true;
+        
+        $currUser = $this->entityManager->getRepository(User::class)->find($_SESSION['id']);
+        
+        $user = $this->entityManager->getRepository(User::class)->find($currUser);
+
+        if ($currUser && $currUser->getRoles()) {
+            foreach ($currUser->getRoles() as $role) {
+                // Check if the role name is 'administrator'
+                if ($role->getName() === 'administrator') {
+                    return true; 
+                }
+            }
+        }
+
+        return false; // User does not have the role of administrator
     }
 
     public function deleteUser($request): Response {
         if ($this->isAdmin()) {
             $userId = $request->getParameter('id');
-
-            // Find the user by ID
             $user = $this->entityManager->getRepository(User::class)->find($userId);
 
-            // If the user exists, delete it
-            if ($user) {
-                $this->entityManager->remove($user);
-                $this->entityManager->flush();
+            // Check if the user has permission to delete users
+            if ($this->permissionManager->canDeleteUser($user)) {
+                // If the user exists, delete it
+                if ($user) {
+                    $this->entityManager->remove($user);
+                    $this->entityManager->flush();
+                }
             }
 
             $response = new Response();
@@ -52,8 +74,5 @@ class AdminController extends BaseController {
         }
     }
 
-    //public function editUser($request): Response {}
-    //public function editRole($request): Response {}
-    //public function deleteRole($request): Response {}
-
+    // Implement editUser, editRole, deleteRole functions similarly
 }

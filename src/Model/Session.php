@@ -43,9 +43,12 @@ class Session
         $this->userId = $userId;
     }
 
-    public function getData(): string
+    public function getData()
     {
-        return $this->data;
+        $sessionData = unserialize($this->data);
+        // For Json decode:
+        // $sessionData = json_decode($this->data, true);
+        return $sessionData;
     }
 
     public function setData(string $data): void

@@ -52,9 +52,19 @@ class LoginController extends BaseController {
             $session = new Session();
             $session->setId(session_id());
             $session->setUserId($user->getId());
-            $session->setData("test"); 
+            $dataArray = [
+                'key1' => 'value1',
+                'key2' => 'value2',
+                'key3' => 'value3'
+            ];
+            $dataString = serialize($dataArray);
+            $session->setData($dataString); 
             $this->entityManager->persist($session);
             $this->entityManager->flush();
+
+            // Using json_encode:
+            // $dataString = json_encode($dataArray);
+
 
             // Redirect to home page
             $response = new Response();

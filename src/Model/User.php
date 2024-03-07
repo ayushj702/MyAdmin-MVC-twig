@@ -145,4 +145,14 @@ class User
             $session->setUser($this);
         }
     }
+
+    public function hasRole($roleName): bool
+    {
+        foreach ($this->roles as $role) {
+            if ($role->getName() === $roleName) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
