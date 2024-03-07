@@ -1,0 +1,9 @@
+permission id
+{user id: permission id}
+admin can only assign the permissions, cannot create permissions
+match when create permission
+applyUser() (permission class)
+
+permission name
+permission desc
+save these into the db
