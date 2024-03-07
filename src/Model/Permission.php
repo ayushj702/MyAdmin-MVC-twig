@@ -44,7 +44,7 @@ class Permission
 
     public function canCreateUser($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
     public function canReadUser(): bool
@@ -54,17 +54,17 @@ class Permission
 
     public function canUpdateUser($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
     public function canDeleteUser($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
     public function canCreateRole($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
     public function canReadRole(): bool
@@ -74,15 +74,15 @@ class Permission
 
     public function canUpdateRole($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
     public function canDeleteRole($userRoles): bool
     {
-        return $this->hasRole($userRoles, 'admin');
+        return $this->hasRole($userRoles, 'administrator');
     }
 
-    private function hasRole($userRoles, $roleName): bool
+    public function hasRole($userRoles, $roleName): bool
     {
         return in_array($roleName, $userRoles);
     }

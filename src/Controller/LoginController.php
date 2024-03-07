@@ -6,6 +6,7 @@ use Core\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Model\User;
 use Model\Session;
+use Model\Permission;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -47,6 +48,20 @@ class LoginController extends BaseController {
             // Start the session and set user data
             session_start();
             $_SESSION['id'] = $user->getId();
+
+            // Fetch all roles for the user from the database
+            $roles = $user->getRoles();
+            $userRoles = [];
+            foreach ($roles as $role) {
+                $userRoles[] = $role->getName();
+            }
+
+            // Store the user roles in the session
+            $_SESSION['user_roles'] = $userRoles;
+
+            // Check if the user has permission to access admin panel
+            $permissionManager = new Permission(); // Or inject it via constructor
+            $isAdmin = $permissionManager->hasRole($userRoles, 'administrator');
 
             // Store session id in sessionDB
             $session = new Session();

@@ -6,6 +6,7 @@ use Core\Response;
 use Model\Permission;
 use Model\User;
 use Model\Role;
+use Model\Session;
 
 class AdminController extends BaseController {
     private $permissionManager;
@@ -33,21 +34,19 @@ class AdminController extends BaseController {
     }
 
     private function isAdmin() {
-        
-        $currUser = $this->entityManager->getRepository(User::class)->find($_SESSION['id']);
-        
-        $user = $this->entityManager->getRepository(User::class)->find($currUser);
-
-        if ($currUser && $currUser->getRoles()) {
-            foreach ($currUser->getRoles() as $role) {
-                // Check if the role name is 'administrator'
-                if ($role->getName() === 'administrator') {
-                    return true; 
+        // Check if the user roles are stored in the session
+        print_r($_SESSION['user_roles']);
+        die;
+        if (isset($_SESSION['user_roles'])) {
+            // Iterate over the user roles
+            foreach ($_SESSION['user_roles'] as $role) {
+                // Check if the role is 'administrator'
+                if ($role === 'administrator') {
+                    return true; // User has the role of administrator
                 }
             }
         }
-
-        return false; // User does not have the role of administrator
+        return false; // 'Administrator' role not found in the user roles
     }
 
     public function deleteUser($request): Response {

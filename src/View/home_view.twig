@@ -13,6 +13,17 @@
                         <li class="nav-item">
                             <a class="nav-link btn btn-success me-4 text-white" href="/edit">Edit Profile</a>
                         </li>
+                        {% set isAdmin = false %}
+                        {% for role in userData.roles %}
+                            {% if role.getName() == 'administrator' %}
+                                {% set isAdmin = true %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if isAdmin %}
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-success me-4 text-white" href="/admin">Admin Panel</a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             <a class="nav-link btn btn-success text-white" href="/logout">Logout</a>
                         </li>
