@@ -5,6 +5,8 @@ namespace Model;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 #[ORM\Entity]
 #[ORM\Table(name: 'roles')]
@@ -24,8 +26,12 @@ class Role
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: "Model\Permission")]
     private $permissions;
 
+    protected $entityManager;
+
     public function __construct() {
         $this->permissions = new ArrayCollection();
+        global $entityManager;
+        $this->entityManager = $entityManager;
     }
 
     public function getId(): int
@@ -74,6 +80,48 @@ class Role
         }
 
         return $this;
+    }
+
+    public function createRole($name): Role
+    {
+        $role = new Role();
+        $role->setName($name);
+        $this->entityManager->persist($role);
+        $this->entityManager->flush();
+
+        return $role;
+    }
+
+    public function readRole($id): ?Role
+    {
+        return $this->entityManager->getRepository(Role::class)->find($id);
+    }
+
+    public function updateRole($id, $name): Role
+    {
+        // Retrieve the role by ID
+        $role = $this->entityManager->getRepository(Role::class)->find($id);
+        if (!$role) {
+            throw new \Exception("Role not found");
+        }
+
+        // Update
+        $role->setName($name);
+        $this->entityManager->persist($role);
+        $this->entityManager->flush();
+
+        return $role;
+    }
+
+    public function deleteRole($id): void
+    {
+        // Retrieve the role by ID
+        $role = $this->entityManager->getRepository(Role::class)->find($id);
+        if (!$role) {
+            throw new \Exception("Role not found");
+        }
+        $this->entityManager->remove($role);
+        $this->entityManager->flush();
     }
 
 }

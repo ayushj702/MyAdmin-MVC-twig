@@ -1,0 +1,12 @@
+create_user:
+  name: Create user
+  desc: Allow the user to create new user accounts
+update_user:
+  name: Update user
+  desc: Allow the user to update user information
+delete_user:
+  name: Delete user
+  desc: Allow the user to delete user accounts
+assign_admin_role:
+  name: Assign Admin Role
+  desc: Allow the user to assign admin roles to other users

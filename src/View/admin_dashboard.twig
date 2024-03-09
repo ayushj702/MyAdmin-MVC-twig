@@ -2,7 +2,6 @@
 
 {% block title %}Admin Dashboard{% endblock %}
 
-
 {% block header %}
 <header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -10,12 +9,14 @@
             <a class="navbar-brand" href="/">My-Admin</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    {% if 'administrator' in activeUserRoles %}
                         <li class="nav-item">
                             <a class="nav-link btn btn-success me-4 text-white" href="/edit">Edit Profile</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-success text-white" href="/logout">Logout</a>
                         </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
@@ -24,10 +25,14 @@
 {% endblock %}
 
 {% block content %}
-<h1>Active Users</h1>
+{% if 'administrator' in activeUserRoles %}
+    <h1>Active Users</h1>
     <ul>
         {% for user in activeUsers %}
             <li>{{ user.name }} - {{ user.email }} <a href="/admin/delete/{{ user.id }}">Delete</a></li>
         {% endfor %}
     </ul>
+{% else %}
+    <p>You must have administrator privileges to access this page.</p>
+{% endif %}
 {% endblock %}

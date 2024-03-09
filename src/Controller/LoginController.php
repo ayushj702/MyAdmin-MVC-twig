@@ -46,7 +46,7 @@ class LoginController extends BaseController {
         // Validate the password
         if ($user && md5($password) === $user->getPassword()) {
             // Start the session and set user data
-            session_start();
+            //session_start();
             $_SESSION['id'] = $user->getId();
 
             // Fetch all roles for the user from the database

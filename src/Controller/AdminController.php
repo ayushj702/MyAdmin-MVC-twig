@@ -7,22 +7,34 @@ use Model\Permission;
 use Model\User;
 use Model\Role;
 use Model\Session;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class AdminController extends BaseController {
-    private $permissionManager;
+    protected $permissionManager;
+    protected $entityManager;
+    protected $twig;
 
     public function __construct() {
         $this->permissionManager = new Permission();
+        global $entityManager;
+        $this->entityManager = $entityManager;
+        $loader = new FilesystemLoader(__DIR__ . '/../View');
+        $this->twig = new Environment($loader);
     }
 
     public function render($request): Response {
         session_start();
+        //dd($_SESSION['user_roles']);
         // Check if the user is an administrator
         if ($this->isAdmin()) {
             $activeUsers = $this->entityManager->getRepository(User::class)->findAll();
-
+            $activeUserRoles = $_SESSION['user_roles'];
             // Render dashboard view
-            $content = $this->twig->render('admin_dashboard.twig', ['activeUsers' => $activeUsers]);
+            $content = $this->twig->render('admin_dashboard.twig', [
+                'activeUsers' => $activeUsers,
+                'activeUserRoles' => $activeUserRoles,
+            ]);
             $response = new Response();
             $response->setContent($content);
             return $response;
@@ -35,10 +47,7 @@ class AdminController extends BaseController {
 
     private function isAdmin() {
         // Check if the user roles are stored in the session
-        print_r($_SESSION['user_roles']);
-        die;
         if (isset($_SESSION['user_roles'])) {
-            // Iterate over the user roles
             foreach ($_SESSION['user_roles'] as $role) {
                 // Check if the role is 'administrator'
                 if ($role === 'administrator') {
@@ -73,5 +82,4 @@ class AdminController extends BaseController {
         }
     }
 
-    // Implement editUser, editRole, deleteRole functions similarly
 }

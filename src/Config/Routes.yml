@@ -1,0 +1,72 @@
+# config/routes.yml
+
+web:
+  homepage:
+    path: "/"
+    method: [GET]
+    title: Welcome to Home Page
+    controller: Controller\HomeController
+    permission:
+      auth: FALSE
+  edit profile:
+    path: "/edit"
+    method: ['GET', 'POST']
+    title: Edit Profile
+    controller: Controller\EditController
+    permission:
+      auth: TRUE
+  login:
+    path: "/login"
+    method: ['GET', 'POST']
+    title: Login
+    controller: Controller\LoginController
+    permission:
+      auth: FALSE
+  register:
+    path: "/register"
+    method: ['GET', 'POST']
+    title: Login
+    controller: Controller\RegisterController
+    permission:
+      auth: FALSE
+  admin:
+    path: "/admin"
+    method: ['GET', 'POST']
+    title: Admin Dashboard
+    controller: Controller\AdminController
+    permission:
+      auth: TRUE
+      role: administrator
+
+  access-denied:
+    path: "/denied"
+    method: [GET]
+    title: 403 Access Denied
+    controller: Controller\AccessDenied
+    permission:
+      auth: FALSE
+
+  logout:
+    path: "/logout"
+    method: [GET]
+    controller: Controller\LogoutController
+    permission:
+      auth: TRUE
+
+  change-role:
+    path: "/change-role"
+    method: [GET]
+    controller: Controller\RoleController
+    permission:
+      auth: TRUE
+  delete_user:
+    path: "/admin/delete/{id}"
+    method: ['POST']
+    controller: Controller\AdminController::deleteUser
+    permission:
+      auth: TRUE
+      role: administrator
+    
+
+
+    

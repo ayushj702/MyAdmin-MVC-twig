@@ -5,6 +5,8 @@ namespace Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'users')]
@@ -13,7 +15,7 @@ class User
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue]
-    private $id;
+    private $id; // Updated property name
 
     #[ORM\Column(type: 'string')]
     private $name;
@@ -31,27 +33,24 @@ class User
     private $profilePhoto;
 
     #[ORM\JoinTable(name: 'users_roles')]
-    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")] // Updated join
     #[ORM\InverseJoinColumn(name: "role_id", referencedColumnName: "id", unique: TRUE)]
     #[ORM\ManyToMany(targetEntity: "Model\Role")]
     private $roles;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: "Model\Session")]
     private $sessions;
-    //pivot table schema
+
+    protected $entityManager;
+
     // Getters and Setters
 
-    private function __construct(){
-        $this->roles = new ArrayCollection();
-        $this->sessions = new ArrayCollection();
-    }
-
-    public function getId(): int
+    public function getId(): int // Updated getter method name
     {
         return $this->id;
     }
 
-    public function setId(string $id): void
+    public function setId(string $id): void // Updated setter method name
     {
         $this->id = $id;
     }
@@ -155,4 +154,60 @@ class User
         }
         return false;
     }
+
+    public function createUser($name, $email, $age, $password, $profilePhoto = null): User
+    {
+        $user = new User();
+        $user->setName($name);
+        $user->setEmail($email);
+        $user->setAge($age);
+        $user->setPassword($password);
+        $user->setProfilePhoto($profilePhoto);
+        $user->
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    public function readUser($id): User
+    {
+        // Retrieve the user by ID from the database
+        return $this->entityManager->getRepository(User::class)->find($id);
+    }
+
+    public function updateUser($id, $name, $email, $age, $password, $profilePhoto = null): User
+    {
+        // Retrieve the user by ID
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            throw new \Exception("User not found");
+        }
+
+        // Update
+        $user->setName($name);
+        $user->setEmail($email);
+        $user->setAge($age);
+        $user->setPassword($password);
+        $user->setProfilePhoto($profilePhoto);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
+    }
+
+    public function deleteUser($id): void
+    {
+        // Retrieve the user by ID
+        $user = $this->entityManager->getRepository(User::class)->find($id);
+        if (!$user) {
+            throw new \Exception("User not found");
+        }
+
+        // Remove
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+    }
+
+
 }

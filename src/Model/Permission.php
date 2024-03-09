@@ -4,10 +4,11 @@ namespace Model;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Yaml\Yaml;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'permissions')]
-class Permission
+class Permission extends BasePermission
 {
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
@@ -20,6 +21,54 @@ class Permission
     #[ORM\ManyToOne(targetEntity: "Model\Role", inversedBy: "permissions")]
     #[ORM\JoinColumn(name: "role_id", referencedColumnName: "id")]
     private $role;
+
+
+    public function applyRole(mixed $value): bool
+    {
+        $requiredRole = $this->getRequiredRole($value);
+
+        // If required role is not specified, allow access
+        if (!$requiredRole) {
+            return true;
+        }
+        
+        $userRoles = $this->getUserRoles(); 
+
+        return $this->hasRole($userRoles, $requiredRole);
+    }
+
+    public function applyAuth(mixed $value): bool
+    {
+        $authRequired = $this->isAuthRequired($value);
+
+        if (!$authRequired) {
+            return true;
+        }
+       
+        $userRoles = $this->getUserRoles(); 
+        return !empty($userRoles);
+    }
+
+    private function getUserRoles(): array
+    {
+        return $_SESSION['user_roles'];
+    }
+
+
+    private function isAuthRequired(string $routeName): bool
+    {
+        $routes = Yaml::parseFile(__DIR__ . '/../Config/Routes.yml');
+
+        return isset($routes['web'][$routeName]['permission']['auth']) 
+            && $routes['web'][$routeName]['permission']['auth'] === true;
+    }
+
+    private function getRequiredRole(string $routeName): ?string
+    {
+        $routes = Yaml::parseFile(__DIR__ . '/../Config/Routes.yml');
+
+        return $routes['web'][$routeName]['permission']['role'] ?? null;
+    }
 
     public function getId(): int
     {
@@ -97,4 +146,5 @@ class Permission
         $this->role = $role;
         return $this;
     }
+    
 }
